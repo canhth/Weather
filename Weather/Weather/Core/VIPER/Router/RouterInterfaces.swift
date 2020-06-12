@@ -46,11 +46,13 @@ extension ViewRouterInterface {
 
 /// Handle UINavigationController as root, with push & pop
 public protocol NavigationRouterInterface: ViewRouterInterface {
+    
     func toController() -> UINavigationController
-
+    
     func push(_ view: ViewInterface, animated: Bool, hideBottomBar: Bool?, popCompletion: (() -> Void)?)
+    
     func popView(animated: Bool)
-
+    
     func setRootView(_ view: ViewInterface, animated: Bool, hideNavigationBar: Bool?)
 }
 

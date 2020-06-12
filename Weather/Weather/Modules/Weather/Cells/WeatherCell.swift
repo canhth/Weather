@@ -10,15 +10,19 @@ import UIKit
 
 final class WeatherCell: UITableViewCell {
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
+    private let dateTimeLabel: UILabel = {
+        let label = UILabel()
+        label.font = NABFont.section
+        label.textColor = AppColor.white
+        return label
+    }()
+    
+    private let dataAmountLabel: UILabel = {
+        let label = UILabel()
+        label.font = NABFont.numberValue
+        label.textColor = AppColor.white
+        label.textAlignment = .right
+        return label
+    }()
 
 }

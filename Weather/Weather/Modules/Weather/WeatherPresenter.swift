@@ -16,6 +16,18 @@ final class WeatherPresenter {
     private unowned let view: WeatherViewInterface
     private let interactor: WeatherInteractorInterface
     private let router: WeatherRouterInterface
+    
+    private var forecastList = [Forecast]() {
+        didSet {
+            view.reloadData()
+        }
+    }
+    
+    private var isLoading = false {
+        didSet {
+            view.setLoadingVisible(isLoading)
+        }
+    }
 
     // MARK: - LifeCycle
 
@@ -28,10 +40,37 @@ final class WeatherPresenter {
     }
 
     func viewDidLoad() {
+        if !AppUserDefault.kLastKeyword.isEmpty {
+            fetchWeatherData(keyword: AppUserDefault.kLastKeyword)
+        }
     }
 }
 
 // MARK: - WeatherPresenterInterface
 
 extension WeatherPresenter: WeatherPresenterInterface {
+    func numberOfForecast() -> Int {
+        return forecastList.count
+    }
+    
+    func dataAtIndex(index: Int) -> Forecast? {
+        return forecastList[safe: index]
+    }
+    
+    func refreshListData() {
+        // TODO:
+    }
+    
+    func fetchWeatherData(keyword: String) {
+        interactor.fetchWeatherData(isCached: false) { [weak self] (result) in
+            guard let self = self else { return }
+            switch result {
+            case .success(let forecasts):
+                self.forecastList = forecasts
+            case .failure(let error):
+                self.router.showAlert(title: "Error", message: error.localizedDescription)
+            }
+        }
+    }
+    
 }

@@ -21,12 +21,20 @@ protocol WeatherRouterInterface: NavigationRouterInterface {
 
 // ViewController
 protocol WeatherViewInterface: ViewInterface {
+    func reloadData()
+    func setLoadingVisible(_ visible: Bool)
 }
 
 // Presenter
 protocol WeatherPresenterInterface: PresenterInterface {
+    func numberOfForecast() -> Int
+    func dataAtIndex(index: Int) -> Forecast?
+    func refreshListData()
+    func fetchWeatherData(keyword: String)
 }
 
 // Interactor
 protocol WeatherInteractorInterface {
+    func cleanUp()
+    func fetchWeatherData(isCached: Bool, completion: @escaping (Result<[Forecast], NetworkError>) -> Void)
 }

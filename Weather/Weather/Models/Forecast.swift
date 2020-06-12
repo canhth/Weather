@@ -9,7 +9,7 @@
 import Foundation
 
 struct Forecast: Decodable {
-    let dateTime: Int
+    let dateTime: Double
     let temp: Temperature
     let pressure: Int
     let humidity: Int

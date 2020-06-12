@@ -15,6 +15,45 @@ final class WeatherViewController: BaseViewController {
 
     var presenter: WeatherPresenterInterface!
 
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: .zero)
+        tableView.register(WeatherCell.self)
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 150
+        tableView.dataSource = self
+        tableView.allowsSelection = false
+        tableView.backgroundColor = AppColor.darkBackground
+        return tableView
+    }()
+    
+    private lazy var searchController: UISearchController = {
+        let controller = UISearchController(searchResultsController: nil)
+        controller.searchResultsUpdater = self
+        controller.searchBar.barStyle = .black
+        controller.hidesNavigationBarDuringPresentation = false
+        return controller
+    }()
+    
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self,
+                                 action: #selector(handleRefresh(_:)),
+                                 for: .valueChanged)
+        refreshControl.tintColor = AppColor.white
+        return refreshControl
+    }()
+    
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        if #available(iOS 13.0, *) {
+            indicator.style = .medium
+        } else {
+            indicator.style = .white
+        }
+        indicator.color = AppColor.white
+        return indicator
+    }()
+    
     // MARK: - LifeCycle
 
     override func viewDidLoad() {
@@ -26,10 +65,75 @@ final class WeatherViewController: BaseViewController {
     // MARK: - Setup
 
     private func setupView() {
+        title = "Weather Forecast"
+        navigationController?.navigationBar.barTintColor = AppColor.darkBackground
+        navigationController?.navigationBar.titleTextAttributes = [
+            .foregroundColor: AppColor.white
+        ]
+        statusBarStyle = .lightContent
+        
+        view.addSubview(tableView)
+        tableView.anchor(top: view.layoutMarginsGuide.topAnchor,
+                         left: view.safeAreaLayoutGuide.leftAnchor,
+                         bottom: view.bottomAnchor,
+                         right: view.safeAreaLayoutGuide.rightAnchor)
+        
+        view.addSubview(loadingIndicator)
+        loadingIndicator.anchorCenter(horizontal: view.centerXAnchor,
+                                      vertical: view.centerYAnchor)
+        
+        tableView.addSubview(refreshControl)
+        tableView.tableHeaderView = searchController.searchBar
+    }
+    
+    @objc
+    private func handleRefresh(_ refreshControl: UIRefreshControl) {
+        guard refreshControl.isRefreshing else { return }
+//        presenter.refreshListData()
     }
 }
 
 // MARK: - WeatherViewInterface
 
 extension WeatherViewController: WeatherViewInterface {
+    func reloadData() {
+        guard !refreshControl.isRefreshing else { return }
+        tableView.reloadData()
+    }
+    
+    func setLoadingVisible(_ visible: Bool) {
+        loadingIndicator.isHidden = !visible
+        if !visible {
+            refreshControl.endRefreshing()
+            loadingIndicator.stopAnimating()
+        } else {
+            loadingIndicator.startAnimating()
+        }
+    }
+}
+
+// MARK: - UITableViewDataSource
+
+extension WeatherViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return presenter.numberOfForecast()
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: WeatherCell = tableView.dequeueReusableCell(for: indexPath)
+//        if let data = presenter.dataAtIndex(index: indexPath.row) {
+//            cell.configCell(with: data)
+//        }
+        return cell
+    }
+}
+
+// MARK: - UISearchViewControllerDelegate
+
+extension WeatherViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        print(searchController.searchBar.text)
+
+        tableView.reloadData()
+    }
 }

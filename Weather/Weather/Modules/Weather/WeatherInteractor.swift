@@ -25,4 +25,12 @@ final class WeatherInteractor {
 // MARK: - WeatherInteractorInterface
 
 extension WeatherInteractor: WeatherInteractorInterface {
+    func cleanUp() {
+        
+    }
+    
+    func fetchWeatherData(isCached: Bool, completion: @escaping (Result<[Forecast], NetworkError>) -> Void) {
+        
+    }
+    
 }

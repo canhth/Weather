@@ -47,11 +47,10 @@ public final class DefaultNetworkConfiguration: NetworkConfiguration {
 
     /// Contains all the configuration properties of Plist file
     public lazy var configuration: [String: Any]? = {
-        guard let fileUrl = Bundle.main.url(forResource: fileName, withExtension: type),
-            let data = try? Data(contentsOf: fileUrl) else { return nil }
-        guard let dict = try? PropertyListSerialization.propertyList(from: data,
-                                                                     options: [],
-                                                                     format: nil) as? [String: Any],
+        guard
+            let fileUrl = Bundle.main.url(forResource: fileName, withExtension: type),
+            let data = try? Data(contentsOf: fileUrl),
+            let dict = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any],
             let result = dict[environment.rawValue] as? [String: Any] else { return nil }
         return result
     }()

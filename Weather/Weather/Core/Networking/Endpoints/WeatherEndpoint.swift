@@ -26,6 +26,7 @@ extension WeatherEndpoint: APIEndpoint {
     var parameters: Parameters? {
         switch self {
         case .fetchWeatherData(let keyword):
+            // TODO: Consider to make the parameter as a Codable object.
             return [
                 "appid": DefaultNetworkConfiguration.networkConfiguration.appId,
                 "q": keyword,
