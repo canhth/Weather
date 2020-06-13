@@ -46,7 +46,7 @@ public extension APIEndpoint {
     func buildRequest() -> URLRequest? {
         guard let url = urlComponents?.url else { return nil }
 
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: 10)
         request.httpMethod = method.rawValue
         request.httpBody = parametersToHttpBody()
         request.timeoutInterval = 5 * 1000
