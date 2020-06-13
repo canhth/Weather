@@ -73,20 +73,24 @@ final class NetworkClientTests: WeatherTests {
                 XCTFail("waitForExpectationsWithTimeout errored: \(error)")
             } else {
                 XCTAssertFalse(forecasts.isEmpty, "Should load all the data probably.")
-                self.testFetchListMobileDataFromCache()
+                self.testFetchListMobileDataFromCache(retry: 0)
             }
         }
     }
     
-    func testFetchListMobileDataFromCache() {
+    func testFetchListMobileDataFromCache(retry: Int) {
+        if retry >= 15 {
+            XCTFail("Fetching from cache errored, try to run testcases again because URL cached based on the params")
+            return
+        }
         networkClient.fetch(endPoint: WeatherEndpoint.fetchWeatherData(keyword: keyword),
                             type: ForecastResponse.self,
                             loadFromCache: true) { (response) in
                                 switch response {
                                 case .success(let data):
                                     XCTAssertFalse(data.list.isEmpty, "Should load all the records from cache probably.")
-                                case .failure(let error):
-                                    XCTFail("Fetching from cache errored: \(error)")
+                                case .failure:
+                                    self.testFetchListMobileDataFromCache(retry: retry + 1)
                                 }
         }
     }
