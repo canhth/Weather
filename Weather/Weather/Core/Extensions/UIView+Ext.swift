@@ -89,13 +89,6 @@ extension UIView {
         }
     }
     
-    /// Set width height divine ratio anchor.
-    /// - Parameter ratioValue: the ratio value to constraint between width & height. It is equal width DIVINE height
-    func anchorRatio(_ ratioValue: CGFloat) {
-        translatesAutoresizingMaskIntoConstraints = false
-        widthAnchor.constraint(equalTo: heightAnchor, multiplier: ratioValue).isActive = true
-    }
-    
     /**
      Programmatically pins the view (sets the top, bottom, left and right anchors) to it's parent's anchors with an optional padding.
      - Parameter padding: padding between the view to be anchored and it's parent view.

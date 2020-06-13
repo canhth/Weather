@@ -47,9 +47,10 @@ final class EmptyStateView: UIView {
     }
     
     func showMessage(state: TableViewState) {
-        guard let superView = superview else { return }
-        messageLabel.text = state.rawValue
-        superView.bringSubviewToFront(messageLabel)
+        if let superView = superview {
+            messageLabel.text = state.rawValue
+            superView.bringSubviewToFront(messageLabel)
+        }
     }
 
 }

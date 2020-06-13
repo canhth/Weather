@@ -29,7 +29,7 @@ final class WeatherViewUITests: BaseUITest {
     func test_Input_Correct_Keyword_Success_And_Refresh() {
         
         test_Input_Correct_Keyword_Success()
-        test_RefreshControl()
+        refreshControl()
     }
     
     func test_Input_Wrong_Keyword_Failed() {
