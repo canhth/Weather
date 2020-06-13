@@ -32,7 +32,7 @@ generating a bunch of API requests.
 - [x] Prepared to support multi environments (dev and prod).
 
 # Things need to improve:
-- Intergrate CI/CD & codecov.io, to double check every commit/PR pass the test cases and how many percent of test coverage.
+- Intergrate CI/CD & [codecov.io](https://medium.com/@smalam119/viper-design-pattern-for-ios-application-development-7a9703902af6), to double check every commit/PR pass the test cases and how many percent of test coverage.
 - Support VoiceOver & Scaling Text.
 
 # Project structures
@@ -110,7 +110,7 @@ Add test cases for each modules or base components to make sure we won't break i
 - [x] WeatherCellTests.
 - [x] Load data from cache.
 - [x] Support Mockable test or load data from local JSON.
-
+```
 NAB-Test/Weather/Weather/AppDelegate.swift: 8 of 8 lines (100.00%)
 NAB-Test/Weather/Weather/CommonViews/EmptyStateView.swift: 29 of 32 lines (90.62%)
 NAB-Test/Weather/Weather/Core/Extensions/Collection+Ext.swift: 6 of 6 lines (100.00%)
