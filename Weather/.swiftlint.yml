@@ -5,6 +5,7 @@ disabled_rules:
   - large_tuple
   - trailing_whitespace
   - block_based_kvo
+  - implicit_return
   
 opt_in_rules:
   - empty_count

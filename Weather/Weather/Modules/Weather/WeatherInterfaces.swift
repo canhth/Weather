@@ -27,14 +27,15 @@ protocol WeatherViewInterface: ViewInterface {
 
 // Presenter
 protocol WeatherPresenterInterface: PresenterInterface {
+    var tableViewState: TableViewState { get }
     func numberOfForecast() -> Int
     func dataAtIndex(index: Int) -> Forecast?
-    func refreshListData()
+    func refreshListData(keyword: String)
     func fetchWeatherData(keyword: String)
+    func cleanup()
 }
 
 // Interactor
 protocol WeatherInteractorInterface {
-    func cleanUp()
-    func fetchWeatherData(isCached: Bool, completion: @escaping (Result<[Forecast], NetworkError>) -> Void)
+    func fetchWeatherData(isCached: Bool, keyword: String, completion: @escaping (Result<[Forecast], NetworkError>) -> Void)
 }

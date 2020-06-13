@@ -31,7 +31,7 @@ extension WeatherEndpoint: APIEndpoint {
                 "appid": DefaultNetworkConfiguration.networkConfiguration.appId,
                 "q": keyword,
                 "units": "metric", // Support metric temporary
-                "cnt": 7, // Support 7 days for now.
+                "cnt": 7 // Support 7 days for now.
             ]
         }
     }

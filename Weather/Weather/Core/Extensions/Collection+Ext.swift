@@ -1,6 +1,6 @@
 //
 //  Collection+Ext.swift
-//  MindValley
+//  Weather
 //
 //  Created by Canh Tran Wizeline on 4/13/20.
 //  Copyright © 2020 CanhTran. All rights reserved.

@@ -12,9 +12,9 @@ import UIKit
 
 final class WeatherViewController: BaseViewController {
     // MARK: - Public Properties
-
+    
     var presenter: WeatherPresenterInterface!
-
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero)
         tableView.register(WeatherCell.self)
@@ -22,15 +22,17 @@ final class WeatherViewController: BaseViewController {
         tableView.estimatedRowHeight = 150
         tableView.dataSource = self
         tableView.allowsSelection = false
+        tableView.keyboardDismissMode = .onDrag
         tableView.backgroundColor = AppColor.darkBackground
         return tableView
     }()
     
     private lazy var searchController: UISearchController = {
         let controller = UISearchController(searchResultsController: nil)
-        controller.searchResultsUpdater = self
         controller.searchBar.barStyle = .black
+        controller.searchBar.delegate = self
         controller.hidesNavigationBarDuringPresentation = false
+        controller.obscuresBackgroundDuringPresentation = false
         return controller
     }()
     
@@ -40,30 +42,33 @@ final class WeatherViewController: BaseViewController {
                                  action: #selector(handleRefresh(_:)),
                                  for: .valueChanged)
         refreshControl.tintColor = AppColor.white
+        refreshControl.backgroundColor = AppColor.darkBackground
         return refreshControl
     }()
     
     private let loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
-        if #available(iOS 13.0, *) {
-            indicator.style = .medium
-        } else {
-            indicator.style = .white
-        }
         indicator.color = AppColor.white
         return indicator
     }()
     
+    private lazy var emptyStateView: EmptyStateView = {
+        let view = EmptyStateView(frame: .zero)
+        return view
+    }()
+    
+    private var tableViewState: TableViewState = .start
+    
     // MARK: - LifeCycle
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         presenter.viewDidLoad()
     }
-
+    
     // MARK: - Setup
-
+    
     private func setupView() {
         title = "Weather Forecast"
         navigationController?.navigationBar.barTintColor = AppColor.darkBackground
@@ -89,7 +94,22 @@ final class WeatherViewController: BaseViewController {
     @objc
     private func handleRefresh(_ refreshControl: UIRefreshControl) {
         guard refreshControl.isRefreshing else { return }
-//        presenter.refreshListData()
+        if let keyword = searchController.searchBar.text, !keyword.isEmpty {
+            presenter.refreshListData(keyword: keyword)
+        } else {
+            refreshControl.endRefreshing()
+            presenter.cleanup()
+        }
+    }
+    
+    private func displayEmptyStateView() {
+        defer {
+            emptyStateView.showMessage(state: presenter.tableViewState)
+        }
+        
+        guard emptyStateView.superview == nil else { return }
+        view.addSubview(emptyStateView)
+        emptyStateView.pinToSuperview()
     }
 }
 
@@ -116,24 +136,46 @@ extension WeatherViewController: WeatherViewInterface {
 
 extension WeatherViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if presenter.numberOfForecast() == 0 {
+            displayEmptyStateView()
+        } else {
+            emptyStateView.removeFromSuperview()
+        }
         return presenter.numberOfForecast()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: WeatherCell = tableView.dequeueReusableCell(for: indexPath)
-//        if let data = presenter.dataAtIndex(index: indexPath.row) {
-//            cell.configCell(with: data)
-//        }
+        if let data = presenter.dataAtIndex(index: indexPath.row) {
+            cell.configCell(with: data)
+        }
         return cell
     }
 }
 
-// MARK: - UISearchViewControllerDelegate
+// MARK: - UISearchBarDelegate
 
-extension WeatherViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        print(searchController.searchBar.text)
-
-        tableView.reloadData()
+extension WeatherViewController: UISearchBarDelegate {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        presenter.cleanup()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self,
+                                               selector: #selector(performSearch),
+                                               object: searchController.searchBar)
+        perform(#selector(performSearch),
+                with: searchController.searchBar,
+                afterDelay: 0.75)
+    }
+    
+    @objc
+    func performSearch(_ searchBar: UISearchBar) {
+        guard let query = searchBar.text?.trimmingCharacters(in: .whitespacesAndNewlines), query.count >= 3 else {
+            Logger.shared.info(object: "Keyword length should be > 3 characters.")
+            return
+        }
+        
+        presenter.fetchWeatherData(keyword: query)
     }
 }

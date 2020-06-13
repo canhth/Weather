@@ -14,13 +14,13 @@ enum DateConverterType: String {
 
 extension Date {
     
-    func convertDateToString(timeStamp: Double) -> String {
+    static func convertDateToString(timeStamp: Double) -> String {
         let date = Date(timeIntervalSince1970: timeStamp)
         let formatter = DateFormatter()
         formatter.locale = .current
         formatter.calendar = .current
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        
+        formatter.dateFormat = DateConverterType.prettyDateTime.rawValue
         return formatter.string(from: date)
     }
 }

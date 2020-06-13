@@ -28,6 +28,8 @@ final class WeatherPresenter {
             view.setLoadingVisible(isLoading)
         }
     }
+    
+    private(set) var tableViewState: TableViewState = .start
 
     // MARK: - LifeCycle
 
@@ -40,8 +42,9 @@ final class WeatherPresenter {
     }
 
     func viewDidLoad() {
-        if !AppUserDefault.kLastKeyword.isEmpty {
-            fetchWeatherData(keyword: AppUserDefault.kLastKeyword)
+        // Store the lastest keyword in result to support always search with latest keyword.
+        if !AppUserDefault.lastKeyword.isEmpty {
+            fetchWeatherData(keyword: AppUserDefault.lastKeyword)
         }
     }
 }
@@ -49,6 +52,7 @@ final class WeatherPresenter {
 // MARK: - WeatherPresenterInterface
 
 extension WeatherPresenter: WeatherPresenterInterface {
+    
     func numberOfForecast() -> Int {
         return forecastList.count
     }
@@ -57,20 +61,30 @@ extension WeatherPresenter: WeatherPresenterInterface {
         return forecastList[safe: index]
     }
     
-    func refreshListData() {
-        // TODO:
+    func refreshListData(keyword: String) {
+        fetchWeatherData(keyword: keyword)
+    }
+    
+    func cleanup() {
+        tableViewState = .start
+        forecastList.removeAll()
     }
     
     func fetchWeatherData(keyword: String) {
-        interactor.fetchWeatherData(isCached: false) { [weak self] (result) in
+        isLoading = true
+        interactor.fetchWeatherData(isCached: false, keyword: keyword) { [weak self] (result) in
             guard let self = self else { return }
             switch result {
             case .success(let forecasts):
                 self.forecastList = forecasts
             case .failure(let error):
+                // Dismiss search view controller first
+                self.router.dismissView(animated: true)
                 self.router.showAlert(title: "Error", message: error.localizedDescription)
+                self.tableViewState = .error
+                self.forecastList.removeAll()
             }
+            self.isLoading = false
         }
     }
-    
 }

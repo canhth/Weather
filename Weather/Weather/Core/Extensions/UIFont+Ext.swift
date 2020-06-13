@@ -1,6 +1,6 @@
 //
 //  UIFont+Ext.swift
-//  MindValley
+//  Weather
 //
 //  Created by Canh Tran Wizeline on 4/9/20.
 //  Copyright © 2020 CanhTran. All rights reserved.
@@ -14,7 +14,7 @@ enum NABFont {
     
     static let section = bold(ofSize: 24)
     
-    static let title = regular(ofSize: 18)
+    static let title = regular(ofSize: 16)
     
     static let subTitle = regular(ofSize: 13)
     

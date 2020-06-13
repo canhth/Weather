@@ -15,4 +15,8 @@ struct Forecast: Decodable {
     let humidity: Int
     let weather: [Weather]
     let speed: Float
+    
+    private enum CodingKeys: String, CodingKey {
+        case dateTime = "dt", temp, pressure, humidity, weather, speed
+    }
 }

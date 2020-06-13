@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ForecastResponse {
+struct ForecastResponse: Decodable {
     let city: City
     let cnt: Int
     let list: [Forecast]

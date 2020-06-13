@@ -85,10 +85,10 @@ private extension APIEndpoint {
     func parametersAsURLQueryItems() -> [URLQueryItem] {
         var items = [URLQueryItem]()
         
-        for (key,value) in parameters ?? [:] {
+        for (key, value) in parameters ?? [ : ] {
             items.append(URLQueryItem(name: key, value: "\(value)"))
         }
         
-        return items.filter{!$0.name.isEmpty}
+        return items.filter { !$0.name.isEmpty }
     }
 }

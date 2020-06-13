@@ -44,8 +44,14 @@ public extension NetworkError {
             return NSLocalizedString("The request does not stored in cache yet.",
                                      comment: "")
         case .noSuccessResponse(let code):
-            return NSLocalizedString("Server did not return success status. Code: \(code)",
+            switch code {
+            case "404":
+                return NSLocalizedString("City not found.", comment: "")
+            default:
+                return NSLocalizedString("Server did not return success status. Code: \(code)",
                 comment: "The status code does not indicate success for the specified response.")
+            }
+            
         case .fetchError(let error):
             return NSLocalizedString("Error occured. Error: \(error)",
                 comment: "Unable to fetch with the specified underlying error.")
