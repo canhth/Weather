@@ -27,6 +27,8 @@ excluded:
   - Pods
   - fastlane
   - XCode Templates
+  - WeatherUITests
+  - WeatherTests
 
 
 line_length:

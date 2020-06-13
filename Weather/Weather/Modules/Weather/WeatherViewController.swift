@@ -22,6 +22,7 @@ final class WeatherViewController: BaseViewController {
         tableView.estimatedRowHeight = 150
         tableView.dataSource = self
         tableView.allowsSelection = false
+        tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.backgroundColor = AppColor.darkBackground
         return tableView
@@ -75,6 +76,7 @@ final class WeatherViewController: BaseViewController {
         navigationController?.navigationBar.titleTextAttributes = [
             .foregroundColor: AppColor.white
         ]
+        view.isAccessibilityElement = false
         statusBarStyle = .lightContent
         
         view.addSubview(tableView)
